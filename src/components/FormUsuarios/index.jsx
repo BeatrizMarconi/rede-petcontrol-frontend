@@ -1,4 +1,5 @@
 import { Button, FormControl, FormLabel, HStack, Input, Select, useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import api from "../../services/api";
 
@@ -6,6 +7,19 @@ export function FormUsuarios({ button }) {
 
     const { register, handleSubmit, /*formState: { errors }*/ } = useForm();
     const toast = useToast();
+    const [perfis, setPerfis] = useState([]);
+
+    useEffect(()=>{
+        api.get("/roles")
+        .then((res)=>{
+            let rolesOrdenado = res.data.reverse()
+            setPerfis(rolesOrdenado)
+            console.log(rolesOrdenado)
+        })
+        .catch(()=>{
+
+        })
+    },[])
 
     const usuarioRegister = (data) => {
         api.post("/users", data)
@@ -56,9 +70,9 @@ export function FormUsuarios({ button }) {
                     <Select
                         type="text"
                         {...register("role_id", { required: true })}>
-                        <option value="3">Employees</option>
-                        <option value="2">Admin</option>
-                        <option value="1">Super_admin</option>
+                        {perfis.map((perfil)=>(
+                        <option value={perfil.id}>{perfil.name}</option>
+                        ))}
                     </Select>
                 </FormControl>
             </HStack>
