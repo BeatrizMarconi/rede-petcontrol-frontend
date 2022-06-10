@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, HStack, Input, Select, useToast } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, HStack, Input, Select, useToast, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import api from "../../services/api";
@@ -8,13 +8,13 @@ export function FormUsuarios({ button }) {
     const { register, handleSubmit, /*formState: { errors }*/ } = useForm();
     const toast = useToast();
     const [perfis, setPerfis] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
         api.get("/roles")
         .then((res)=>{
             let rolesOrdenado = res.data.reverse()
             setPerfis(rolesOrdenado)
-            console.log(rolesOrdenado)
         })
         .catch(()=>{
 
@@ -22,6 +22,7 @@ export function FormUsuarios({ button }) {
     },[])
 
     const usuarioRegister = (data) => {
+        setLoading(true);
         api.post("/users", data)
         .then(()=>{
             toast({
@@ -31,6 +32,7 @@ export function FormUsuarios({ button }) {
                 isClosable: true,
                 position: 'top'
             })
+            setLoading(false);
         })
         .catch((err)=>{
             toast({
@@ -40,6 +42,7 @@ export function FormUsuarios({ button }) {
                 isClosable: true,
                 position: 'top'
             })
+            setLoading(false);
         })
     }
 
@@ -91,8 +94,9 @@ export function FormUsuarios({ button }) {
                 color={'white'}
                 _hover={{ bg: '#07727a' }}
                 width="100%"
-                type="submit">
-                {button}
+                type="submit"
+                disabled={loading}>
+                {loading ? <Spinner/> : button}
             </Button>
         </form>
     )
