@@ -1,16 +1,22 @@
-import { Button, FormControl, FormLabel, HStack, Input, Select, useToast, Spinner } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, HStack, Input, Select, useToast, Spinner, SelectField } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../../services/api";
 
-export function FormUsuarios({ button }) {
+export function FormUsuarios({ button, isNew }) {
 
-    const { register, handleSubmit, /*formState: { errors }*/ } = useForm();
+    const { register, handleSubmit, setValue, /*formState: { errors }*/ } = useForm();
     const toast = useToast();
     const [perfis, setPerfis] = useState([]);
     const [loading, setLoading] = useState(false);
+    const { id } = useParams();
+    const [usuario, setUsuario] = useState();
+    const navigate = useNavigate();
 
     useEffect(() => {
+
+
         api.get("/roles")
             .then((res) => {
                 let rolesOrdenado = res.data.reverse()
@@ -19,17 +25,56 @@ export function FormUsuarios({ button }) {
             .catch(() => {
 
             })
+
+        if (isNew) {
+            api.get(`/users/${id}`)
+                .then((res) => {
+                    setUsuario(res.data)
+                    setValue("name", res.data.name);
+                    setValue("username", res.data.username);
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
     }, [])
 
     const usuarioRegister = (data) => {
+
         setLoading(true);
-        if (button === 'Cadastrar') {
+        
+        if (isNew) {
+            api.put(`/users/${id}`, data)
+                .then((res) => {
+                    toast({
+                        title: 'Usuário atualizado com sucesso!',
+                        status: 'success',
+                        duration: 4000,
+                        isClosable: true,
+                        position: 'top'
+                    })
+                    setLoading(false);
+                    navigate('/usuarios')
+                })
+                .catch((err) => {
+                    toast({
+                        title: `Ops, algo de errado!`,
+                        status: 'error',
+                        duration: 4000,
+                        isClosable: true,
+                        position: 'top'
+                    })
+                    setLoading(false);
+                })
+
+        } else {
             api.post("/users", data)
                 .then(() => {
                     toast({
                         title: 'Usuário cadastrado com sucesso!',
                         status: 'success',
-                        duration: 6000,
+                        duration: 4000,
                         isClosable: true,
                         position: 'top'
                     })
@@ -45,8 +90,6 @@ export function FormUsuarios({ button }) {
                     })
                     setLoading(false);
                 })
-        }else{
-            api.put("/users/")
         }
     }
 
@@ -77,6 +120,7 @@ export function FormUsuarios({ button }) {
                     <Select
                         type="text"
                         {...register("role_id", { required: true })}>
+
                         {perfis.map((perfil) => (
                             <option value={perfil.id}>{perfil.name}</option>
                         ))}
@@ -89,8 +133,10 @@ export function FormUsuarios({ button }) {
                 <Input
                     placeholder="********"
                     type="password"
+                    
                     {...register("password", { required: true })} />
             </FormControl>
+            
 
             <Button
                 mt={8}

@@ -8,7 +8,7 @@ export default function Novo() {
                 <Box fontWeight="bold" fontSize="30px" mb={61} mt={10} pl={4}>Cadastre um novo Usuário</Box>
 
                 <Box width={400} lineHeight={8}>
-                    <FormUsuarios button="Cadastrar"/>
+                    <FormUsuarios button="Cadastrar" isNew={false}/>
                 </Box>
             </Box>
         </Center>

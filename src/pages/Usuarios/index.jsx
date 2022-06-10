@@ -19,7 +19,6 @@ export default function Usuarios() {
         api.get('/users')
             .then((res) => {
                 setUsuarios(res.data);
-                console.log(res.data)
             })
             .catch((err) => {
                 console.log(`vish algo deu errado no usuarios ${err}`)
