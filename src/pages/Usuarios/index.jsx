@@ -63,7 +63,7 @@ export default function Usuarios() {
                                     <Td>{moment(usuario.updated_at).format('DD/MM/YYYY')}</Td>
                                     <Td >
                                         <HStack>
-                                            <Link to={"/usuarios/editar/6"}><GrEdit /></Link>
+                                            <Link to={`/usuarios/editar/${usuario.id}`}><GrEdit /></Link>
                                             <RiDeleteBin6Line />
                                         </HStack>
                                     </Td>

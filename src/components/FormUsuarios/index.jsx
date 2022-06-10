@@ -10,40 +10,44 @@ export function FormUsuarios({ button }) {
     const [perfis, setPerfis] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         api.get("/roles")
-        .then((res)=>{
-            let rolesOrdenado = res.data.reverse()
-            setPerfis(rolesOrdenado)
-        })
-        .catch(()=>{
+            .then((res) => {
+                let rolesOrdenado = res.data.reverse()
+                setPerfis(rolesOrdenado)
+            })
+            .catch(() => {
 
-        })
-    },[])
+            })
+    }, [])
 
     const usuarioRegister = (data) => {
         setLoading(true);
-        api.post("/users", data)
-        .then(()=>{
-            toast({
-                title: 'Usuário cadastrado com sucesso!',
-                status: 'success',
-                duration: 6000,
-                isClosable: true,
-                position: 'top'
-            })
-            setLoading(false);
-        })
-        .catch((err)=>{
-            toast({
-                title: `Usuário ${err.response.data.username}`,
-                status: 'error',
-                duration: 4000,
-                isClosable: true,
-                position: 'top'
-            })
-            setLoading(false);
-        })
+        if (button === 'Cadastrar') {
+            api.post("/users", data)
+                .then(() => {
+                    toast({
+                        title: 'Usuário cadastrado com sucesso!',
+                        status: 'success',
+                        duration: 6000,
+                        isClosable: true,
+                        position: 'top'
+                    })
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    toast({
+                        title: `Usuário ${err.response.data.username}`,
+                        status: 'error',
+                        duration: 4000,
+                        isClosable: true,
+                        position: 'top'
+                    })
+                    setLoading(false);
+                })
+        }else{
+            api.put("/users/")
+        }
     }
 
     return (
@@ -73,8 +77,8 @@ export function FormUsuarios({ button }) {
                     <Select
                         type="text"
                         {...register("role_id", { required: true })}>
-                        {perfis.map((perfil)=>(
-                        <option value={perfil.id}>{perfil.name}</option>
+                        {perfis.map((perfil) => (
+                            <option value={perfil.id}>{perfil.name}</option>
                         ))}
                     </Select>
                 </FormControl>
@@ -82,9 +86,9 @@ export function FormUsuarios({ button }) {
 
             <FormControl id="password" isRequired>
                 <FormLabel>Senha</FormLabel>
-                <Input 
+                <Input
                     placeholder="********"
-                    type="password" 
+                    type="password"
                     {...register("password", { required: true })} />
             </FormControl>
 
@@ -96,7 +100,7 @@ export function FormUsuarios({ button }) {
                 width="100%"
                 type="submit"
                 disabled={loading}>
-                {loading ? <Spinner/> : button}
+                {loading ? <Spinner /> : button}
             </Button>
         </form>
     )
