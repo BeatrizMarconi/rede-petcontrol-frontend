@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa";
 import { GrEdit } from "react-icons/gr";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useEffect, useState } from "react";
+import moment from 'moment';
 import api from "../../services/api";
 
 export default function Usuarios() {
@@ -15,10 +16,10 @@ export default function Usuarios() {
     const goToAdd = () => navigate('/usuarios/cadastrar')
     
     useEffect(() => {
-        api.get('/usuarios')
+        api.get('/users')
             .then((res) => {
-                setUsuarios(res);
-                console.log(res)
+                setUsuarios(res.data);
+                console.log(res.data)
             })
             .catch((err) => {
                 console.log(`vish algo deu errado no usuarios ${err}`)
@@ -57,9 +58,9 @@ export default function Usuarios() {
                             {usuarios.map((usuario) => (
                                 <Tr>
                                     <Td key={usuario.id}>{usuario.name}</Td>
-                                    <Td>{usuario.email}</Td>
-                                    <Td>Endereço</Td>
-                                    <Td>Lolozinho</Td>
+                                    <Td>{usuario.username}</Td>
+                                    <Td>{usuario.role.name}</Td>
+                                    <Td>{moment(usuario.updated_at).format('DD/MM/YYYY')}</Td>
                                     <Td >
                                         <HStack>
                                             <Link to={"/usuarios/editar/6"}><GrEdit /></Link>
